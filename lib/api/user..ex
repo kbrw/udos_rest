@@ -2,6 +2,7 @@ defmodule Api.User do
   use Plug.Router
 
   plug :content_type
+  plug Api.Plug.Json
   plug :match
   plug :dispatch
 

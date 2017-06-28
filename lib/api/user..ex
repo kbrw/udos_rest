@@ -15,14 +15,15 @@ defmodule Api.User do
   post "/" do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
 
-    user = Poison.decode!(body)
-    id = :crypto.hash(:sha, "#{user["firstname"]}#{user["lastname"]}") |> Base.encode16 |> String.slice(0,6)
-
-    KV.put(id, user)
-
-    conn
-      |> put_resp_header("location", id)
-      |> send_resp(201, "")
+    case Poison.decode(body) do
+      {:ok, user} ->
+        id = :crypto.hash(:sha, "#{user["firstname"]}#{user["lastname"]}") |> Base.encode16 |> String.slice(0,6)
+        KV.put(id, user)
+        conn
+          |> put_resp_header("location", id)
+          |> send_resp(201, "")
+      {:error,_} -> send_resp(conn, 400, Poison.encode!(%{message: "Invalid JSON"}))
+    end
   end
 
   put "/:id" do

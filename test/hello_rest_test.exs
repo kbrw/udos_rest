@@ -90,4 +90,13 @@ defmodule HelloRestTest do
     assert conn.state == :sent
     assert conn.status == 404
   end
+
+  test "create user with invalid JSON" do
+    conn = conn(:post, "/user", "aaaaa")
+    conn = Api.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 400
+    assert conn.resp_body == %{message: "Invalid JSON"} |> Poison.encode!
+  end
 end

@@ -1,14 +1,9 @@
 defmodule Api.User do
   use Plug.Router
 
-  plug :content_type
   plug Api.Plug.Json
   plug :match
   plug :dispatch
-
-  def content_type(conn,_opts) do
-    conn |> put_resp_content_type("application/json")
-  end
 
   get "/:id" do
     case KV.get(id) do

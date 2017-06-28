@@ -18,24 +18,19 @@ defmodule Api.User do
   end
 
   post "/" do
-    {:ok, body, conn} = Plug.Conn.read_body(conn)
-
-    case Poison.decode(body) do
-      {:ok, %{"firstname" => firstname, "lastname" => lastname}=user}->
+    case conn.private[:json_obj] do
+      %{"firstname" => firstname, "lastname" => lastname}=user->
         id = :crypto.hash(:sha, "#{firstname}#{lastname}") |> Base.encode16 |> String.slice(0,6)
         KV.put(id, user)
         conn
           |> put_resp_header("location", id)
           |> send_resp(201, "")
-      {:ok, _}   -> send_resp(conn, 400, Poison.encode!(%{message: "Invalid payload"}))
-      {:error,_} -> send_resp(conn, 400, Poison.encode!(%{message: "Invalid JSON"}))
+      _ -> send_resp(conn, 400, Poison.encode!(%{message: "Invalid payload"}))
     end
   end
 
   put "/:id" do
-    {:ok, body, conn} = Plug.Conn.read_body(conn)
-
-    user = Poison.decode!(body)
+    user = conn.private[:json_obj]
 
     KV.put(id, user)
 

@@ -26,4 +26,14 @@ defmodule Api.User do
       |> put_resp_header("location", id)
       |> send_resp(201, "")
   end
+
+  put "/:id" do
+    {:ok, body, conn} = Plug.Conn.read_body(conn)
+
+    user = Poison.decode!(body)
+
+    KV.put(id, user)
+
+    send_resp(conn, 204, "")
+  end
 end

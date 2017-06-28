@@ -16,6 +16,14 @@ defmodule Api.User do
   post "/" do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
     Logger.debug(inspect(body))
-    send_resp(conn, 204, "")
+
+    user = Poison.decode!(body)
+    id = :crypto.hash(:sha, "#{user["firstname"]}#{user["lastname"]}") |> Base.encode16 |> String.slice(0,6)
+
+    KV.put(id, user)
+
+    conn
+      |> put_resp_header("location", id)
+      |> send_resp(201, "")
   end
 end

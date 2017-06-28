@@ -8,6 +8,8 @@ defmodule Api.Router do
     send_resp(conn, 200, "world")
   end
 
+  forward "/user", to: Api.User
+
   match _ do
     send_resp(conn, 404, "oops")
   end

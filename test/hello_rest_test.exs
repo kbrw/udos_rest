@@ -99,4 +99,17 @@ defmodule HelloRestTest do
     assert conn.status == 400
     assert conn.resp_body == %{message: "Invalid JSON"} |> Poison.encode!
   end
+
+  test "create user with invalid payload" do
+    conn = conn(:post, "/user", """
+      {
+        "firstname": "antoine"
+      }
+    """)
+    conn = Api.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 400
+    assert conn.resp_body == %{message: "Invalid payload"} |> Poison.encode!
+  end
 end

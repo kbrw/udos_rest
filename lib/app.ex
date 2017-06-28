@@ -2,7 +2,10 @@ defmodule HelloRest.App do
   use Application
 
   def start(_type, _args) do
+    import Supervisor.Spec
+
     children = [
+      worker(KV, []),
       Plug.Adapters.Cowboy.child_spec(:http, Api.Router, [], [port: 4000])
     ]
 

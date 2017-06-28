@@ -36,4 +36,10 @@ defmodule Api.User do
 
     send_resp(conn, 204, "")
   end
+
+  delete "/:id" do
+    KV.delete(id)
+
+    send_resp(conn, 204, "")
+  end
 end

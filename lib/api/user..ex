@@ -5,7 +5,9 @@ defmodule Api.User do
   plug :dispatch
 
   get "/:id" do
-    value = KV.get(id)
-    send_resp(conn, 200, value)
+    case KV.get(id) do
+      nil   -> send_resp(conn, 404, "")
+      value -> send_resp(conn, 200, value)
+    end
   end
 end

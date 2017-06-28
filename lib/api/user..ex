@@ -1,6 +1,5 @@
 defmodule Api.User do
   use Plug.Router
-  require Logger
 
   plug :match
   plug :dispatch
@@ -15,7 +14,6 @@ defmodule Api.User do
 
   post "/" do
     {:ok, body, conn} = Plug.Conn.read_body(conn)
-    Logger.debug(inspect(body))
 
     user = Poison.decode!(body)
     id = :crypto.hash(:sha, "#{user["firstname"]}#{user["lastname"]}") |> Base.encode16 |> String.slice(0,6)
